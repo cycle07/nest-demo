@@ -1,7 +1,7 @@
 /*
  * @Author: tianhong
  * @Date: 2022-11-08 16:43:45
- * @LastEditTime: 2022-11-09 11:29:44
+ * @LastEditTime: 2022-11-09 19:47:05
  * @LastEditors: tianhong
  * @Description: Describe the function of this file
  */
@@ -32,13 +32,14 @@ export class CoffeesService {
     const coffee = this.coffees.find((item) => item.id === +id);
     if (!coffee) {
       throw new HttpException(`Coffee #${id} not found`, HttpStatus.NOT_FOUND); // errMsg: string, errCode: number
-      // throw new NotFoundException(`Coffee #${id} not found`);
+      throw new NotFoundException(`Coffee #${id} not found`);
     }
     return coffee;
   }
 
   create(createCoffeeDto: any) {
     this.coffees.push(createCoffeeDto);
+    return createCoffeeDto;
   }
 
   update(id: string, updateCoffeeDto: any) {

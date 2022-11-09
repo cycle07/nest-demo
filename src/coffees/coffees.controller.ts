@@ -1,6 +1,13 @@
 /*
  * @Author: tianhong
  * @Date: 2022-11-08 15:51:40
+ * @LastEditTime: 2022-11-09 19:23:27
+ * @LastEditors: tianhong
+ * @Description: Describe the function of this file
+ */
+/*
+ * @Author: tianhong
+ * @Date: 2022-11-08 15:51:40
  * @LastEditTime: 2022-11-09 14:40:54
  * @LastEditors: tianhong
  * @Description: Describe the function of this file
@@ -20,6 +27,7 @@ import {
 } from '@nestjs/common';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
+import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 
 @Controller('coffees')
 export class CoffeesController {
@@ -35,6 +43,7 @@ export class CoffeesController {
   @Get()
   findAll(@Query() paginationQuery) {
     // const { limit, offset } = paginationQuery;
+    console.log('paginationQuery', paginationQuery);
     return this.coffeesService.findAll();
     // return `This action return all coffees. limit: ${limit}, offset: ${offset}`;
   }
@@ -57,8 +66,8 @@ export class CoffeesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() body) {
-    return this.coffeesService.update(id, body);
+  update(@Param('id') id: string, @Body() updateCoffeeDto: UpdateCoffeeDto) {
+    return this.coffeesService.update(id, updateCoffeeDto);
     // return `This action updates #${id} coffee`;
   }
 
