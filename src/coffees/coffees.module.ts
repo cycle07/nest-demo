@@ -1,20 +1,57 @@
 /*
  * @Author: tianhong
  * @Date: 2022-11-09 11:34:01
- * @LastEditTime: 2022-11-10 19:38:04
+ * @LastEditTime: 2022-11-17 16:15:35
  * @LastEditors: tianhong
  * @Description: Describe the function of this file
  */
-import { Module } from '@nestjs/common';
+import { Injectable, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoffeesController } from './coffees.controller';
 import { CoffeesService } from './coffees.service';
 import { Coffee } from './entities/coffee.entity';
 import { Flavor } from './entities/flavor.entity';
+import { Event } from '../events/entities/event.entity';
+import { COFFEE_BRANDS } from './coffees.constants';
+
+// class MockCoffeesService {}
+
+// class ConfigService {}
+// class DevelopmentConfigService {}
+// class ProductionConfigService {}
+
+@Injectable()
+export class CoffeeBrandsFactory {
+  create() {
+    return ['buddy brew', 'nescafe'];
+  }
+}
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Coffee, Flavor])],
+  imports: [TypeOrmModule.forFeature([Coffee, Flavor, Event])],
   controllers: [CoffeesController],
-  providers: [CoffeesService],
+  providers: [
+    // {
+    //   provide: CoffeesService,
+    //   useValue: new MockCoffeesService(),
+    // },
+    CoffeesService,
+    // { provide: COFFEE_BRANDS, useValue: ['buddy brew', 'nescafe'] },
+    // {
+    //   provide: ConfigService,
+    //   useClass:
+    //     process.env.NODE_ENV === 'development'
+    //       ? DevelopmentConfigService
+    //       : ProductionConfigService,
+    // },
+    CoffeeBrandsFactory,
+    {
+      provide: COFFEE_BRANDS,
+      useFactory: (brandsFactory: CoffeeBrandsFactory) =>
+        brandsFactory.create(), // 实例化注入类的方法【可带外部值】
+      inject: [CoffeeBrandsFactory],
+    },
+  ],
+  exports: [CoffeesService],
 })
 export class CoffeesModule {}
