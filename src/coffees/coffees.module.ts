@@ -5,7 +5,7 @@
  * @LastEditors: tianhong
  * @Description: Describe the function of this file
  */
-import { Injectable, Module } from '@nestjs/common';
+import { Injectable, Module, Scope } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoffeesController } from './coffees.controller';
 import { CoffeesService } from './coffees.service';
@@ -13,6 +13,8 @@ import { Coffee } from './entities/coffee.entity';
 import { Flavor } from './entities/flavor.entity';
 import { Event } from '../events/entities/event.entity';
 import { COFFEE_BRANDS } from './coffees.constants';
+import { ConfigModule } from '@nestjs/config';
+import coffeesConfig from './config/coffees.config';
 
 // class MockCoffeesService {}
 
@@ -28,7 +30,10 @@ export class CoffeeBrandsFactory {
 }
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Coffee, Flavor, Event])],
+  imports: [
+    TypeOrmModule.forFeature([Coffee, Flavor, Event]),
+    ConfigModule.forFeature(coffeesConfig), // 注入外部config
+  ],
   controllers: [CoffeesController],
   providers: [
     // {
@@ -50,6 +55,7 @@ export class CoffeeBrandsFactory {
       useFactory: (brandsFactory: CoffeeBrandsFactory) =>
         brandsFactory.create(), // 实例化注入类的方法【可带外部值】
       inject: [CoffeeBrandsFactory],
+      // scope: Scope.DEFAULT, // 也可以加在这里
     },
   ],
   exports: [CoffeesService],

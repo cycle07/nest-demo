@@ -24,12 +24,16 @@ import {
   Res,
   Delete,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 
+// @UsePipes(ValidationPipe) // Controller级别控制pipe
+// @UsePipes(new ValidationPipe()) // 如果有特殊实例化需求
 @Controller('coffees')
 export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) {}
@@ -41,6 +45,7 @@ export class CoffeesController {
     response.status(200).send('This action return all coffees');
   }
 
+  // @UsePipes(ValidationPipe) // 方法级别控制pipe
   @Get()
   findAll(@Query() paginationQuery: PaginationQueryDto) {
     // const { limit, offset } = paginationQuery;
@@ -67,7 +72,10 @@ export class CoffeesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCoffeeDto: UpdateCoffeeDto) {
+  update(
+    @Param('id') id: string,
+    @Body(ValidationPipe) updateCoffeeDto: UpdateCoffeeDto, // bouns Params级别控制pipe
+  ) {
     return this.coffeesService.update(id, updateCoffeeDto);
     // return `This action updates #${id} coffee`;
   }

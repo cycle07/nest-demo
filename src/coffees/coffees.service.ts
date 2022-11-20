@@ -11,18 +11,24 @@ import {
   HttpStatus,
   NotFoundException,
   Inject,
+  Scope,
 } from '@nestjs/common';
+import { ConfigService, ConfigType } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { Event } from 'src/events/entities/event.entity';
 import { DataSource, Repository } from 'typeorm';
 import { COFFEE_BRANDS } from './coffees.constants';
+import coffeesConfig from './config/coffees.config';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { Coffee } from './entities/coffee.entity';
 import { Flavor } from './entities/flavor.entity';
 
 @Injectable()
+// @Injectable({ scope: Scope.DEFAULT }) // 全局只实例化一次
+// @Injectable({ scope: Scope.TRANSIENT }) // 用一次实例化一次
+@Injectable({ scope: Scope.REQUEST }) // 一次请求实例化一次，请求完就GC，初始化共用一个实例，本质上注册到了上游controller的构造函数中，使用这个scope会额外获得一个Request信息，包含请求的请求头，Cookie，ip，但这个操作会消耗性能
 export class CoffeesService {
   constructor(
     @InjectRepository(Coffee)
@@ -33,8 +39,13 @@ export class CoffeesService {
 
     private readonly connection: DataSource, // typeorm v3
     @Inject(COFFEE_BRANDS) coffeeBrands: string[],
+
+    @Inject(coffeesConfig.KEY)
+    private readonly coffeesConfiguration: ConfigType<typeof coffeesConfig>,
   ) {
-    console.log(coffeeBrands);
+    // console.log(coffeeBrands);
+    // console.log('env', this.configService.get('database.host'));
+    console.log('coffees', this.coffeesConfiguration);
   }
 
   findAll(paginationQuery: PaginationQueryDto) {
