@@ -1,7 +1,7 @@
 /*
  * @Author: tianhong
  * @Date: 2022-11-08 15:51:40
- * @LastEditTime: 2022-11-16 15:10:06
+ * @LastEditTime: 2022-11-21 16:34:35
  * @LastEditors: tianhong
  * @Description: Describe the function of this file
  */
@@ -26,7 +26,9 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
+  SetMetadata,
 } from '@nestjs/common';
+import { Public } from 'src/common/decorator/public.decorator';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
@@ -46,6 +48,8 @@ export class CoffeesController {
   }
 
   // @UsePipes(ValidationPipe) // 方法级别控制pipe
+  // @SetMetadata(IS_PUBLIC_KEY, true)
+  @Public() // 自定义装饰器
   @Get()
   findAll(@Query() paginationQuery: PaginationQueryDto) {
     // const { limit, offset } = paginationQuery;
