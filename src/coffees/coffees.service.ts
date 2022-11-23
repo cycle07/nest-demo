@@ -57,9 +57,9 @@ export class CoffeesService {
     });
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     const coffee = await this.coffeeRepository.findOne({
-      where: { id: Number(id) },
+      where: { id },
       relations: ['flavors'],
     });
     if (!coffee) {
@@ -80,12 +80,12 @@ export class CoffeesService {
     return this.coffeeRepository.save(coffee);
   }
 
-  async update(id: string, updateCoffeeDto: UpdateCoffeeDto) {
+  async update(id: number, updateCoffeeDto: UpdateCoffeeDto) {
     const flavors = await Promise.all(
       updateCoffeeDto.flavors.map((name) => this.preloadFlavorByName(name)),
     );
     const coffee = await this.coffeeRepository.preload({
-      id: Number(id),
+      id,
       ...updateCoffeeDto,
       flavors,
     }); // preload === insert on duplicate key update
@@ -95,7 +95,7 @@ export class CoffeesService {
     return this.coffeeRepository.save(coffee);
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     const coffee = await this.findOne(id);
     return this.coffeeRepository.remove(coffee);
   }

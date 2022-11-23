@@ -1,7 +1,7 @@
 /*
  * @Author: tianhong
  * @Date: 2022-10-25 15:40:42
- * @LastEditTime: 2022-11-21 16:46:15
+ * @LastEditTime: 2022-11-23 10:10:16
  * @LastEditors: tianhong
  * @Description: Describe the function of this file
  */
@@ -9,6 +9,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception/http-exception.filter';
+import { TimeoutInterceptor } from './common/intercepter/timeout/timeout.interceptor';
+import { WrapResponseInterceptor } from './common/intercepter/wrap-response/wrap-response.interceptor';
 // import { ApiKeyGuard } from './common/guards/api-key/api-key.guard';
 
 async function bootstrap() {
@@ -25,6 +27,10 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new HttpExceptionFilter());
   // app.useGlobalGuards(new ApiKeyGuard()); // 全局使用带有reflector的实例会报错，API类不使用依赖注入才可以写在这里
+  app.useGlobalInterceptors(
+    new WrapResponseInterceptor(),
+    new TimeoutInterceptor(),
+  );
   await app.listen(3000);
 }
 bootstrap();

@@ -1,7 +1,7 @@
 /*
  * @Author: tianhong
  * @Date: 2022-11-08 15:51:40
- * @LastEditTime: 2022-11-21 16:34:35
+ * @LastEditTime: 2022-11-23 11:37:34
  * @LastEditors: tianhong
  * @Description: Describe the function of this file
  */
@@ -28,8 +28,10 @@ import {
   ValidationPipe,
   SetMetadata,
 } from '@nestjs/common';
+import { Protocol } from 'src/common/decorator/protocol.decorator';
 import { Public } from 'src/common/decorator/public.decorator';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { ParseIntPipe } from 'src/common/pipes/parse-int/parse-int.pipe';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
@@ -51,7 +53,11 @@ export class CoffeesController {
   // @SetMetadata(IS_PUBLIC_KEY, true)
   @Public() // 自定义装饰器
   @Get()
-  findAll(@Query() paginationQuery: PaginationQueryDto) {
+  findAll(
+    @Protocol('https') protocol: string,
+    @Query() paginationQuery: PaginationQueryDto,
+  ) {
+    console.log('protocol', protocol);
     // const { limit, offset } = paginationQuery;
     // console.log('paginationQuery', paginationQuery);
     return this.coffeesService.findAll(paginationQuery);
@@ -62,7 +68,7 @@ export class CoffeesController {
   // findOne(@Param() params) {
   //   return `This action returns #${params.id} coffee`;
   // }
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     // 如果应用其中某一个值，其他的值将不会被校验
     // return `This action returns #${id} coffee`;
     return this.coffeesService.findOne(id);
@@ -77,7 +83,7 @@ export class CoffeesController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) updateCoffeeDto: UpdateCoffeeDto, // bouns Params级别控制pipe
   ) {
     return this.coffeesService.update(id, updateCoffeeDto);
@@ -85,7 +91,7 @@ export class CoffeesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.coffeesService.remove(id);
     // return `This action removes #${id} coffee`;
   }
