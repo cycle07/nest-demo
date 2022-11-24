@@ -1,12 +1,13 @@
 /*
  * @Author: tianhong
  * @Date: 2022-10-25 15:40:42
- * @LastEditTime: 2022-11-23 10:10:16
+ * @LastEditTime: 2022-11-24 18:52:54
  * @LastEditors: tianhong
  * @Description: Describe the function of this file
  */
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception/http-exception.filter';
 import { TimeoutInterceptor } from './common/intercepter/timeout/timeout.interceptor';
@@ -31,6 +32,16 @@ async function bootstrap() {
     new WrapResponseInterceptor(),
     new TimeoutInterceptor(),
   );
+
+  const options = new DocumentBuilder()
+    .setTitle('Ilucoffee')
+    .setDescription('Coffee application')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
+
   await app.listen(3000);
 }
 bootstrap();

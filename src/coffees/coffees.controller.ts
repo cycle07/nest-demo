@@ -1,14 +1,7 @@
 /*
  * @Author: tianhong
  * @Date: 2022-11-08 15:51:40
- * @LastEditTime: 2022-11-23 11:37:34
- * @LastEditors: tianhong
- * @Description: Describe the function of this file
- */
-/*
- * @Author: tianhong
- * @Date: 2022-11-08 15:51:40
- * @LastEditTime: 2022-11-09 14:40:54
+ * @LastEditTime: 2022-11-24 19:08:49
  * @LastEditors: tianhong
  * @Description: Describe the function of this file
  */
@@ -28,6 +21,7 @@ import {
   ValidationPipe,
   SetMetadata,
 } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Protocol } from 'src/common/decorator/protocol.decorator';
 import { Public } from 'src/common/decorator/public.decorator';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
@@ -38,6 +32,7 @@ import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 
 // @UsePipes(ValidationPipe) // Controller级别控制pipe
 // @UsePipes(new ValidationPipe()) // 如果有特殊实例化需求
+@ApiTags('coffee')
 @Controller('coffees')
 export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) {}
@@ -51,6 +46,7 @@ export class CoffeesController {
 
   // @UsePipes(ValidationPipe) // 方法级别控制pipe
   // @SetMetadata(IS_PUBLIC_KEY, true)
+  @ApiResponse({ status: 403, description: 'Forbidden...' })
   @Public() // 自定义装饰器
   @Get()
   findAll(
