@@ -15,8 +15,8 @@ import {
 } from '@nestjs/common';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
-import { Event } from 'src/events/entities/event.entity';
+import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { Events } from '../events/entities/event.entity';
 import { DataSource, Repository } from 'typeorm';
 import { COFFEE_BRANDS } from './coffees.constants';
 import coffeesConfig from './config/coffees.config';
@@ -38,14 +38,16 @@ export class CoffeesService {
     private readonly flavorRepository: Repository<Flavor>, // ctx.dbInstance
 
     private readonly connection: DataSource, // typeorm v3
-    @Inject(COFFEE_BRANDS) coffeeBrands: string[],
 
-    @Inject(coffeesConfig.KEY)
-    private readonly coffeesConfiguration: ConfigType<typeof coffeesConfig>,
+    // @Inject(COFFEE_BRANDS) coffeeBrands: string[],
+    // @Inject(coffeesConfig.KEY)
+    // private readonly coffeesConfiguration: ConfigType<typeof coffeesConfig>,
+
+    private readonly configService: ConfigService,
   ) {
     // console.log(coffeeBrands);
     // console.log('env', this.configService.get('database.host'));
-    console.log('coffees', this.coffeesConfiguration);
+    // console.log('coffees', this.coffeesConfiguration);
   }
 
   findAll(paginationQuery: PaginationQueryDto) {
@@ -64,7 +66,7 @@ export class CoffeesService {
     });
     if (!coffee) {
       throw new HttpException(`Coffee #${id} not found`, HttpStatus.NOT_FOUND); // errMsg: string, errCode: number
-      throw new NotFoundException(`Coffee #${id} not found`);
+      // throw new NotFoundException(`Coffee #${id} not found`);
     }
     return coffee;
   }
@@ -108,7 +110,7 @@ export class CoffeesService {
     try {
       coffee.recommendations++;
 
-      const recommendEvent = new Event();
+      const recommendEvent = new Events();
       recommendEvent.name = 'recommend_coffee';
       recommendEvent.type = 'coffee';
       recommendEvent.payload = { coffeeId: coffee.id };

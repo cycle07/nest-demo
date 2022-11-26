@@ -10,7 +10,7 @@ import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 @Index(['name', 'type']) // 复合索引1
 // @Index(['name', 'id'], { unique: true }) // 复合索引2
 @Entity()
-export class Event {
+export class Events {
   @PrimaryGeneratedColumn()
   id: number;
 
